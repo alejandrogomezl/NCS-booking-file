@@ -3,7 +3,7 @@ from openpyxl import Workbook
 import openpyxl
 import os
 import shutil
-import pandas as pd
+import xlwt
 
 class write_excel:
 
@@ -18,12 +18,24 @@ class write_excel:
         os.mkdir("out")
     
     def conv(self, file):
-        df = pd.read_excel(file, engine='openpyxl')
-        file_new = file[:-5] + ".xls"
-        with pd.ExcelWriter(file_new, engine='openpyxl') as writer:
-            df.to_excel(writer, index=False)
+        # Leer el archivo .xlsx
+        wb_xlsx = openpyxl.load_workbook(file)
+        hoja_xlsx = wb_xlsx.active
+
+        # Crear un nuevo libro .xls
+        wb_xls = xlwt.Workbook()
+        hoja_xls = wb_xls.add_sheet('Hoja1')
+
+        # Iterar sobre las filas y columnas del archivo .xlsx y escribir en .xls
+        for fila in range(hoja_xlsx.max_row):
+            for columna in range(hoja_xlsx.max_column):
+                valor = hoja_xlsx.cell(row=fila+1, column=columna+1).value
+                hoja_xls.write(fila, columna, valor)
+
+        # Guardar el nuevo archivo .xls
+        wb_xls.save(f"{file.split('.')[0]}.xls")
+        print(f"Archivo {file} convertido a {file.split('.')[0]}.xls")
         os.remove(file)
-        print(f"Archivo {file_new} convertido a .xls")
 
     def write (self):
         self.empty_out()
