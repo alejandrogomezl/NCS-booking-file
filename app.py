@@ -1,13 +1,15 @@
 from flask import Flask, request, redirect, url_for, send_from_directory, render_template
 import os
+import shutil
 import zipfile
 from read_hotelgest import read_excel
+from read_new import read_csv
 from write_NCS import write_excel
 
 UPLOAD_FOLDER = 'uploads'
 OUTPUT_FOLDER = 'out'
 ZIP_FOLDER = 'zip'
-ALLOWED_EXTENSIONS = {'xlsx'}
+ALLOWED_EXTENSIONS = {'xlsx', 'csv'}
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
@@ -24,22 +26,34 @@ def upload_file():
 @app.route('/upload', methods=['POST'])
 def upload_file_post():
     if 'file' not in request.files:
-        return redirect(request.url)
+        return "No se encontró el archivo en la solicitud", 400
     file = request.files['file']
     if file.filename == '':
-        return redirect(request.url)
-    if file and allowed_file(file.filename):
-        filename = "in1.xlsx"
-        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+        return "El nombre del archivo está vacío", 400
+    if not allowed_file(file.filename):
+        return "Archivo no permitido", 400
+    if file:
+        filename = file.filename
+        file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        file.save(file_path)
         
         # Procesa el archivo
-        input_file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        input_file_path = file_path
         print(f"Archivo subido: {input_file_path}")
-        excel_data = read_excel(input_file_path).read_excel()
+        
+        if filename.endswith('.xlsx'):
+            excel_data = read_excel(input_file_path).read_excel()
+        elif filename.endswith('.csv'):
+            excel_data = read_csv(input_file_path).read_csv()
+        else:
+            return "Formato de archivo no soportado", 400
+        
         write_excel(excel_data).write()
         
         # Redirige a la página de descarga
         return redirect(url_for('download_file'))
+    else:
+        return "Error desconocido", 400
 
 @app.route('/download')
 def download_file():
@@ -64,10 +78,14 @@ def download(filename):
         return "Archivo no encontrado", 404
 
 if __name__ == '__main__':
-    if not os.path.exists(UPLOAD_FOLDER):
-        os.makedirs(UPLOAD_FOLDER)
-    if not os.path.exists(OUTPUT_FOLDER):
-        os.makedirs(OUTPUT_FOLDER)
-    if not os.path.exists(ZIP_FOLDER):
-        os.makedirs(ZIP_FOLDER)
+    # Vaciar y recrear las carpetas
+    def empty_and_create(folder):
+        if os.path.exists(folder):
+            shutil.rmtree(folder)
+        os.makedirs(folder)
+
+    empty_and_create(UPLOAD_FOLDER)
+    empty_and_create(OUTPUT_FOLDER)
+    empty_and_create(ZIP_FOLDER)
+
     app.run(debug=True)
