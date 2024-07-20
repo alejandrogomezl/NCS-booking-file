@@ -1,19 +1,28 @@
 <!doctype html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Download Files</title>
+    <title>Descargar Archivos</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
-    <h1>Download Processed Files</h1>
-    <ul>
-        {% for file in files %}
-            <li><a href="{{ url_for('download', filename=file) }}">{{ file }}</a></li>
-        {% endfor %}
-    </ul>
-    <a href="{{ url_for('download_zip') }}"><button>Download All as ZIP</button></a>
-    <a href="/"><button>Upload another file</button></a>
+    <div class="container">
+        <h1>Descarga Archivos Procesados</h1>
+        <ul>
+            {% for file in files %}
+                <li><a href="{{ url_for('download', filename=file) }}">{{ file }}</a></li>
+            {% endfor %}
+        </ul>
+        <a href="{{ url_for('download_zip') }}"><button>Descargar Todo en ZIP</button></a>
+        <a href="/"><button>Subir otro archivo</button></a>
+    </div>
+    <footer>
+        <p>&copy; 2024 Alejandro Gómez Lozano | 
+           <a href="tel:+34634211516">Tlf.: 634 21 15 16</a> | 
+           <a href="mailto:info@alejandrogl.es">Email: info@alejandrogl.es</a> | 
+           <a href="https://alejandrogl.es">Web: alejandrogl.es</a>
+        </p>
+    </footer>
 </body>
 </html>

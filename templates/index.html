@@ -1,16 +1,25 @@
 <!doctype html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Upload File</title>
+    <title>Subir Archivo</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
-    <h1>Upload your Excel file</h1>
-    <form action="/upload" method="post" enctype="multipart/form-data">
-        <input type="file" name="file" required>
-        <input type="submit" value="Upload">
-    </form>
+    <div class="container">
+        <h1>Sube tu archivo de Excel</h1>
+        <form action="/upload" method="post" enctype="multipart/form-data">
+            <input type="file" name="file" required>
+            <input type="submit" value="Subir">
+        </form>
+    </div>
+    <footer>
+        <p>&copy; 2024 Alejandro Gómez Lozano | 
+           <a href="tel:+34634211516">Tlf.: 634 21 15 16</a> | 
+           <a href="mailto:info@alejandrogl.es">Email: info@alejandrogl.es</a> | 
+           <a href="https://alejandrogl.es">Web: alejandrogl.es</a>
+        </p>
+    </footer>
 </body>
 </html>
