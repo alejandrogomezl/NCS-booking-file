@@ -8,7 +8,7 @@
 </head>
 <body>
     <div class="container">
-        <h1>Descarga Archivos Procesados</h1>
+        <h1>Descargue Archivos Procesados</h1>
         <ul>
             {% for file in files %}
                 <li><a href="{{ url_for('download', filename=file) }}">{{ file }}</a></li>
